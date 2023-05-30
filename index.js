@@ -28,6 +28,15 @@ async function run() {
     const usersCollection = client.db("bistroDB").collection("users");
 
 
+
+
+    //get all login user===========
+    app.get('/users', async (req,res)=>{
+      const result = await usersCollection.find().toArray()
+      res.send(result )
+    })
+
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -71,6 +80,21 @@ async function run() {
       const result = await cartCollection.insertOne(item);
       res.send(result);
     });
+
+    //update specific user as a admin==============
+    app.post('users/:id',async(req,res)=>{
+      const id = req.params.id 
+      const filter = { _id: new ObjectId(id) };
+
+       const updateDoc = {
+         $set: {
+           role: 'admin',
+         },
+         
+       };
+       const result = await usersCollection.updateOne(filter, updateDoc);
+       res.send(result)
+    })
 
     //delete cart item==========================
     app.delete("/carts/:id", async (req, res) => {
